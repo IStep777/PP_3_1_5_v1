@@ -61,17 +61,19 @@ public class UserServiceImp implements UserDetailsService,UserService{
     }
 
     @Override
+    @Transactional
     public void saveUser(User user) {
-        entityManager.merge(user);
+            entityManager.merge(user);
     }
 
     @Override
-    public User getUser(long id) {
+    public User getUser(int id) {
         return entityManager.find(User.class, id);
     }
 
     @Override
-    public void deleteUser(long id) {
+    @Transactional
+    public void deleteUser(int id) {
         User user = entityManager.getReference(User.class, id);
         entityManager.remove(user);
 
