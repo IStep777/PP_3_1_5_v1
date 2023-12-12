@@ -12,9 +12,11 @@ public interface UserService {
 
     public void saveUser(User user);
 
-    public User getUser(int id);
+    public User getUser(Long id);
 
-    public void deleteUser(int id);
+    public void deleteUser(Long id);
 
-    public User findByUsername(String username);
+    public User findByEmail(String username);
+
+
 }

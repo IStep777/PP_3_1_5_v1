@@ -6,76 +6,77 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImp implements UserDetailsService,UserService{
-
-    private UserRepository userRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
-
+public class UserServiceImp implements UserDetailsService, UserService {
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    UserRepository userRepository;
 
-    public User findByUsername(String username){
-        return userRepository.findByUsername(username);
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s; not found", username));
+            throw new UsernameNotFoundException(String.format("User '%s; not found", email));
         }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));
 
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
-        return  roles.stream().map (r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
 
     }
 
-
     @Override
     public List<User> getAllUsers() {
-        return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+        return userRepository.findAll();
 
     }
 
     @Override
     @Transactional
     public void saveUser(User user) {
-            entityManager.merge(user);
+        userRepository.save(user);
     }
 
     @Override
-    public User getUser(int id) {
-        return entityManager.find(User.class, id);
+    public User getUser(Long id) {
+        return userRepository.getById(id);
     }
 
     @Override
     @Transactional
-    public void deleteUser(int id) {
-        User user = entityManager.getReference(User.class, id);
-        entityManager.remove(user);
+    public void deleteUser(Long id) {
+        User user = userRepository.getById(id);
+        userRepository.delete(user);
 
     }
+
+
 }
