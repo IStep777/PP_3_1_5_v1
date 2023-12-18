@@ -37,9 +37,9 @@ public class Util {
         Set<Role> userSet = new HashSet<>();
         userSet.add(user);
 
-        User user1 = new User("Ivan", "Ivanov", 22, "ivanov@mail.ru", "$2a$10$BZXH7GvMubHIhE39qX4ohuM5mAtJSsAhoCG5LMaIQ3C2j2YjNYtKu"
+        User user1 = new User("admin", "adminov", 22, "admin@mail.ru", "admin"
                 , adminSet);
-        User user2 = new User("Petr", "Petrov", 33, "petrov@mail.ru", "$2a$10$WYMKG.cluSp/aSqHDwjXBezGdndi6zxQUWJ9th.dOGg0mVwX8Icty"
+        User user2 = new User("user", "userov", 33, "user@mail.ru", "user"
                 , userSet);
         userService.saveUser(user1);
         userService.saveUser(user2);

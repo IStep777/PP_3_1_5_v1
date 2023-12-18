@@ -1,90 +1,82 @@
-
 <!DOCTYPE html>
-<html lang="ru" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" class="h-100"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <title>User page</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <title>Page</title>
 </head>
+
 <body>
-<!--Шапка с логином и ролями-->
 <header>
-    <nav class="navbar navbar-dark bg-dark navbar-fixed-top">
-        <div class="container-fluid text-white">
-            <span class="navbar-header">
-                <span th:text="${user.getEmail()}"></span>
-                <span> with roles: </span>
-                <span th:each="role : ${user.getRoles()}"
-                      th:text="${role.getRole().replace('ROLE_', '') + ' '}">
-                </span>
-            </span>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</header>
+    <div class="bs">
+        <div class="container-fluid bg-dark text-white my-4">
+            <div class="row gx-5">
+                <div class="col-lg-11 me-auto">
+                    <h5>
+                        <!--  <span th:text="${user.getName()} "></span>
+                          <span> with roles: </span>
 
-<!--- Устанавливаем навигацию с вертикальными подушками--->
-
-<div class="d-flex">
-    <div class="col-1">
-        <!--- Устанавливаем навигацию с вертикальными "подушками"--->
-        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link active" href="/user" sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')"
-               role="tab"
-               aria-controls="v-pills-user" aria-selected="true">User</a>
+                          <span th:each= "roles:${user.getRoles()}"
+                                th:text="${roles.getRole().replace('ROLE_','')}+'  '"></span> -->
+                    </h5>
+                </div>
+                <div class="col-lg-1 ms-auto">
+                    <form th:action="@{/logout}" method="get">
+                        <button type="submit" class="btn bg-dark text-secondary">Logout</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-9">
-        <h2>User information page</h2>
-        <table class="table table-striped">
-            <ul class="nav nav-tabs" id="nav-tab" role="tablist">
-            </ul>
-            <nav class="navbar navbar-light bg-light">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="#">About user</a>
-                </div>
-            </nav>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">First name</th>
-                <th scope="col">Last name</th>
-                <th scope="col">Age</th>
-                <th scope="col">Email</th>
-                <th scope="col">Role</th>
-            </tr>
-            <tbody>
-            <tr>
-                <td th:text="${user.id}">Id</td>
-                <td th:text="${user.firstname}">First name</td>
-                <td th:text="${user.lastname}">Last name</td>
-                <td th:text="${user.age}">Age</td>
-                <td th:text="${user.email}">Email</td>
-                <td> <th:block th:each="role: ${user.roles}"
-                               th:text="${role.getRole().replace('ROLE_', ' ')}">Roles
-                </th:block>
-                </td>
-            <tr>
-            </tbody>
-        </table>
+</header>
+
+<div class="d-flex align-items-start">
+    <!-- Создаем кнопку слева для получения информации о юзере -->
+    <div class="col-2">
+        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <button class="nav-link active" id="v-pills-user-tab" data-bs-toggle="pill" data-bs-target="#v-pills-user"
+                    type="button" role="tab" aria-controls="v-pills-user" aria-selected="true">User
+            </button>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+
+        <h1>User information-page</h1>
+
+        <div class="p-3 border bg-light">
+            <table class="table table-secondary table-striped table-hover caption-top table-bordered ">
+                <h5>About User</h5>
+                <thead class="table-light">
+                <tr>
+                    <th class="col">Id</th>
+                    <th class="col">Fisrtname</th>
+                    <th class="col">Lastname</th>
+                    <th class="col">Age</th>
+                    <th class="col">Email</th>
+                    <th class="col">Role</th>
+                </tr>
+                </thead>
+                <tbody id="basicTable"></tbody>
+            </table>
+            <br>
+        </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
+<script src="webjars/jquery/3.4.1/jquery.min.js"></script>
+<script src="/user.js"></script>
+
 
 </body>
+
 </html>

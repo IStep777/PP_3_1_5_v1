@@ -1,18 +1,20 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.services.NoUserException;
 import ru.kata.spring.boot_security.demo.services.UserService;
-
 
 import java.security.Principal;
 
 
-@Controller
-@RequestMapping({"/user"})
+@RestController
+@CrossOrigin
+@RequestMapping({"/api/user"})
 public class UserController {
     private final UserService userService;
 
@@ -20,11 +22,16 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping({""})
-    public String showUserAcc(Principal principal, Model model) {
-        User user = this.userService.findByEmail(principal.getName());
-        model.addAttribute("user", user);
-        model.addAttribute("userRoles", user.getRoles());
-        return "/user";
+
+    @GetMapping()
+    public User showUserAcc(Principal principal, Model model) {
+        User user = userService.findByEmail(principal.getName());
+        if (user == null) {
+            throw new NoUserException("User not found");
+        }
+        return user;
     }
+
+
 }
+
