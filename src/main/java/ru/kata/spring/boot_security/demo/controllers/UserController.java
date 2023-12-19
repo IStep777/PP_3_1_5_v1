@@ -1,12 +1,13 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.services.NoUserException;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 import java.security.Principal;
@@ -24,12 +25,11 @@ public class UserController {
 
 
     @GetMapping()
-    public User showUserAcc(Principal principal, Model model) {
+    public ResponseEntity showUserAcc(Principal principal, Model model) {
         User user = userService.findByEmail(principal.getName());
-        if (user == null) {
-            throw new NoUserException("User not found");
-        }
-        return user;
+        return user != null
+                ? new ResponseEntity<>(user, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 

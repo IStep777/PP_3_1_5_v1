@@ -1,4 +1,4 @@
-const userUrl = 'http://localhost:8080/api/user';
+const userUrl = '/api/user';
 
 
 function getPage() {
@@ -15,10 +15,29 @@ function getInformation(user) {
             <td>${user.lastname}</td>
             <td>${user.age}</td>
             <td>${user.email}</td>
-            <td>${user.rolesToString}</td>
+            <td>${listRoles(user)}</td>
          
         </tr>`;
 
+   document.getElementById('buttonAdmin').hidden = isNotAdminRole(user);
+
+    document.getElementById('UserInfo').innerHTML = `<tr>
+        ${user.email} with roles: ${listRoles(user)}</tr>`;
+
+}
+
+function isNotAdminRole(user){
+
+    let isNotAdminRole = true;
+
+    for (let i = 0; i < user.roles.length; i++) {
+        if (user.roles[i].role == 'ROLE_ADMIN'){
+            isNotAdminRole = false;
+            break;
+        };
+    }
+
+    return isNotAdminRole;
 }
 
 getPage();

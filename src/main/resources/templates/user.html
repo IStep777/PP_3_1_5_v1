@@ -18,12 +18,9 @@
         <div class="container-fluid bg-dark text-white my-4">
             <div class="row gx-5">
                 <div class="col-lg-11 me-auto">
-                    <h5>
-                        <!--  <span th:text="${user.getName()} "></span>
-                          <span> with roles: </span>
-
-                          <span th:each= "roles:${user.getRoles()}"
-                                th:text="${roles.getRole().replace('ROLE_','')}+'  '"></span> -->
+                    <h5 id="UserInfo">
+                        <span class="navbar-brand">
+                    </span>
                     </h5>
                 </div>
                 <div class="col-lg-1 ms-auto">
@@ -39,10 +36,10 @@
 <div class="d-flex align-items-start">
     <!-- Создаем кнопку слева для получения информации о юзере -->
     <div class="col-2">
+
         <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            <button class="nav-link active" id="v-pills-user-tab" data-bs-toggle="pill" data-bs-target="#v-pills-user"
-                    type="button" role="tab" aria-controls="v-pills-user" aria-selected="true">User
-            </button>
+            <a href="/admin" type="button" class="btn btn-primary btn-lg nav-link" id="buttonAdmin">Admin</a>
+            <a href="/user" type="button" class="btn btn-primary btn-lg nav-link active">User</a>
         </div>
     </div>
 
@@ -75,6 +72,7 @@
         crossorigin="anonymous"></script>
 <script src="webjars/jquery/3.4.1/jquery.min.js"></script>
 <script src="/user.js"></script>
+<script src="/listRoles.js"></script>
 
 
 </body>

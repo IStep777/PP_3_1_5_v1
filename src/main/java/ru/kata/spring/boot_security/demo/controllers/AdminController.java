@@ -1,8 +1,9 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.services.NoUserException;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
@@ -22,41 +23,37 @@ public class AdminController {
     }
 
     @GetMapping
-    public List<User> showAll() {//@ModelAttribute("user") User user, Principal principal, Model model) {
-//        User authenticatedUser = this.userService.findByEmail(principal.getName());
-//        model.addAttribute("authenticatedUser", authenticatedUser);
-//        model.addAttribute("rolesAuthenticatedUser", authenticatedUser.getRoles());
-//        model.addAttribute("users", this.userService.getAllUsers());
-//        List<Role> roles = this.roleService.getAllRoles();
-//        model.addAttribute("allRoles", roles);
+    public ResponseEntity showAll() {//@ModelAttribute("user") User user, Principal principal, Model model) {
         List<User> users = this.userService.getAllUsers();
-        return users;
+        return users != null && !users.isEmpty()
+                ? new ResponseEntity<>(users, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
+    public ResponseEntity getUser(@PathVariable Long id) {
         User user = userService.getUser(id);
-        if (user == null) {
-            throw new NoUserException("There is no user with ID = " + id + " in Database");
-        }
-        return user;
+        return user != null
+                ? new ResponseEntity<>(user, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
     @PostMapping
-    public User saveUser(@RequestBody User user) {
+    public ResponseEntity saveUser(@RequestBody User user) {
         this.userService.saveUser(user);
-        return user;
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PatchMapping({"/{id}"})
-    public User update(@RequestBody User user) {
+    public ResponseEntity update(@RequestBody User user) {
         userService.saveUser(user);
-        return user;
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping({"/{id}"})
-    public void delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable("id") Long id) {
         this.userService.deleteUser(id);
-        //return "redirect:/admin";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
